@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FormMenu.cs" />
+    <Compile Include="FormMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FormMenu.Designer.cs">
       <DependentUpon>FormMenu.cs</DependentUpon>
     </Compile>
@@ -115,6 +117,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Compile Include="Models\Socio.cs" />
+    <Compile Include="Models\Membresia.cs" />
+    <Compile Include="Models\Pago.cs" />
+    <Compile Include="Models\Plan.cs" />
+    <Compile Include="Controllers\MembresiaController.cs" />
+    <Compile Include="Controllers\PagoController.cs" />
+    <Compile Include="Controllers\PlanController.cs" />
+    <Compile Include="Controllers\SocioController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
