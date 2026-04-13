@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GYM_NoSql.Views;
+using GYM_NoSql.Models;
 
 namespace GYM_NoSql
 {
