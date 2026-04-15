@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GYM_NoSql.models
+namespace GYM_NoSql.Models
 {
     public class Pago
     {
-        public string Id { get; set; }
-        public string MembresiaId { get; set; }
+        // Llave primaria (NUMBER en Oracle)
+        public int Id_Pago { get; set; }
+
+        // Llave foránea: ahora conecta directamente con el Socio (ya no con Membresia)
+        public int Id_Socio { get; set; }
+
+        // Datos del pago
+        public DateTime Fecha_Pago { get; set; }
         public decimal Monto { get; set; }
-        public DateTime Fecha { get; set; }
-        public string Metodo { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using GYM_NoSql.Views;
 using System.Windows.Forms;
 using System;
+
 namespace GYM_NoSql
 {
     partial class FormMenu
@@ -20,7 +21,6 @@ namespace GYM_NoSql
             this.lblSubtitulo = new System.Windows.Forms.Label();
             this.btnSocios = new System.Windows.Forms.Button();
             this.btnPlanes = new System.Windows.Forms.Button();
-            this.btnMembresias = new System.Windows.Forms.Button();
             this.btnPagos = new System.Windows.Forms.Button();
             this.pnlBotones = new System.Windows.Forms.Panel();
             this.SuspendLayout();
@@ -65,22 +65,10 @@ namespace GYM_NoSql
             this.btnPlanes.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnPlanes.Click += new System.EventHandler(this.btnPlanes_Click);
 
-            // btnMembresias
-            this.btnMembresias.Text = "Membresías";
-            this.btnMembresias.Size = new System.Drawing.Size(260, 55);
-            this.btnMembresias.Location = new System.Drawing.Point(0, 130);
-            this.btnMembresias.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.btnMembresias.BackColor = System.Drawing.Color.White;
-            this.btnMembresias.ForeColor = System.Drawing.Color.FromArgb(27, 94, 32);
-            this.btnMembresias.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMembresias.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(27, 94, 32);
-            this.btnMembresias.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnMembresias.Click += new System.EventHandler(this.btnMembresias_Click);
-
             // btnPagos
             this.btnPagos.Text = "Pagos";
             this.btnPagos.Size = new System.Drawing.Size(260, 55);
-            this.btnPagos.Location = new System.Drawing.Point(0, 195);
+            this.btnPagos.Location = new System.Drawing.Point(0, 130);
             this.btnPagos.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.btnPagos.BackColor = System.Drawing.Color.White;
             this.btnPagos.ForeColor = System.Drawing.Color.FromArgb(27, 94, 32);
@@ -90,12 +78,11 @@ namespace GYM_NoSql
             this.btnPagos.Click += new System.EventHandler(this.btnPagos_Click);
 
             // pnlBotones
-            this.pnlBotones.Size = new System.Drawing.Size(260, 260);
+            this.pnlBotones.Size = new System.Drawing.Size(260, 195);
             this.pnlBotones.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pnlBotones.BackColor = System.Drawing.Color.Transparent;
             this.pnlBotones.Controls.Add(this.btnSocios);
             this.pnlBotones.Controls.Add(this.btnPlanes);
-            this.pnlBotones.Controls.Add(this.btnMembresias);
             this.pnlBotones.Controls.Add(this.btnPagos);
 
             // FormMenu
@@ -115,7 +102,6 @@ namespace GYM_NoSql
         private System.Windows.Forms.Label lblSubtitulo;
         private System.Windows.Forms.Button btnSocios;
         private System.Windows.Forms.Button btnPlanes;
-        private System.Windows.Forms.Button btnMembresias;
         private System.Windows.Forms.Button btnPagos;
         private System.Windows.Forms.Panel pnlBotones;
     }

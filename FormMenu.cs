@@ -37,9 +37,6 @@ namespace GYM_NoSql
         private void btnPlanes_Click(object sender, EventArgs e)
             => AbrirForm(new FormPlanes());
 
-        private void btnMembresias_Click(object sender, EventArgs e)
-            => AbrirForm(new FormMembresias());
-
         private void btnPagos_Click(object sender, EventArgs e)
             => AbrirForm(new FormPagos());
 
