@@ -11,38 +11,7 @@ namespace GYM_NoSql.controllers
     {
         private string connectionString = ConfigurationManager.ConnectionStrings["OracleConn"].ConnectionString;
 
-        public List<Pago> ObtenerTodos()
-        {
-            List<Pago> listaPagos = new List<Pago>();
-
-            using (OracleConnection conn = new OracleConnection(connectionString))
-            {
-                conn.Open();
-
-                string sql = @"
-                    SELECT p.id_pago, p.id_socio, p.fecha_pago, p.monto
-                    FROM pagos p
-                    ORDER BY p.id_pago DESC";
-
-                OracleCommand cmd = new OracleCommand(sql, conn);
-
-                using (OracleDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        listaPagos.Add(new Pago
-                        {
-                            Id_Pago = Convert.ToInt32(reader["id_pago"]),
-                            Id_Socio = Convert.ToInt32(reader["id_socio"]),
-                            Fecha_Pago = Convert.ToDateTime(reader["fecha_pago"]),
-                            Monto = Convert.ToDecimal(reader["monto"])
-                        });
-                    }
-                }
-            }
-
-            return listaPagos;
-        }
+       
 
         public void Agregar(Pago p)
         {

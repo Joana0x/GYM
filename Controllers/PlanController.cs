@@ -99,47 +99,7 @@ namespace GYM_NoSql.controllers
             }
         }
 
-        public List<Plan> Buscar(string nombre, string estado)
-        {
-            List<Plan> lista = new List<Plan>();
-
-            using (OracleConnection conn = new OracleConnection(connectionString))
-            {
-                conn.Open();
-
-                string sql = "SELECT id_plan, nombre, precio, activo FROM planes WHERE 1=1";
-
-                if (!string.IsNullOrWhiteSpace(nombre))
-                    sql += " AND LOWER(nombre) LIKE :nombre";
-
-                if (estado == "1" || estado == "0")
-                    sql += " AND activo = :activo";
-
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    if (!string.IsNullOrWhiteSpace(nombre))
-                        cmd.Parameters.Add("nombre", "%" + nombre.ToLower() + "%");
-
-                    if (estado == "1" || estado == "0")
-                        cmd.Parameters.Add("activo", estado);
-
-                    using (OracleDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            lista.Add(new Plan
-                            {
-                                Id_Plan = Convert.ToInt32(reader["id_plan"]),
-                                Nombre = reader["nombre"].ToString(),
-                                Precio = Convert.ToDecimal(reader["precio"]),
-                                Activo = reader["activo"].ToString()
-                            });
-                        }
-                    }
-                }
-            }
-
-            return lista;
+        
         }
-    }
+    
 }

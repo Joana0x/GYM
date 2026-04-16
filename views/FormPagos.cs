@@ -268,27 +268,6 @@ namespace GYM_NoSql.Views
             txtMonto.Focus();
         }
 
-        private void dgvPagos_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0)
-                return;
-
-            try
-            {
-                DataGridViewRow fila = dgvPagos.Rows[e.RowIndex];
-
-                idPagoSeleccionado = Convert.ToInt32(fila.Cells["id_pago"].Value);
-                cmbSocio.SelectedValue = Convert.ToInt32(fila.Cells["id_socio"].Value);
-                dtpFecha.Value = Convert.ToDateTime(fila.Cells["fecha_pago"].Value);
-                txtMonto.Text = Convert.ToDecimal(fila.Cells["monto"].Value).ToString("0.##");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al seleccionar el pago: " + ex.Message, "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private void txtBuscar_Enter(object sender, EventArgs e)
         {
             if (txtBuscar.Text == placeholder)
@@ -314,14 +293,7 @@ namespace GYM_NoSql.Views
             this.Close();
         }
 
-        private void dgvPagos_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-        }
-
-        private void pnlDerecha_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+        
 
         private void txtBuscar_TextChanged(object sender, EventArgs e)
         {

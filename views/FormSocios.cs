@@ -455,8 +455,6 @@ namespace GYM_NoSql.Views
         private void btnLimpiar_Click(object sender, EventArgs e) => LimpiarCajas();
         private void btnRegresar_Click(object sender, EventArgs e) => this.Close();
 
-        // Eventos vacíos por si el diseñador visual los sigue buscando
-        private void dgvSocios_CellClick(object sender, DataGridViewCellEventArgs e) { }
         private void dgvSocios_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
 
     }

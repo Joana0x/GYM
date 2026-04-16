@@ -147,7 +147,6 @@
             this.dgvPlanes.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvPlanes.Size = new System.Drawing.Size(750, 480);
             this.dgvPlanes.TabIndex = 5;
-            this.dgvPlanes.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPlanes_CellContentClick);
             this.dgvPlanes.SelectionChanged += new System.EventHandler(this.dgvPlanes_SelectionChanged);
             // 
             // pnlDerecha
@@ -171,7 +170,6 @@
             this.pnlDerecha.Name = "pnlDerecha";
             this.pnlDerecha.Size = new System.Drawing.Size(300, 580);
             this.pnlDerecha.TabIndex = 6;
-            this.pnlDerecha.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlDerecha_Paint);
             // 
             // lblNombre
             // 

@@ -122,17 +122,7 @@ namespace GYM_NoSql.Views
             return true;
         }
 
-        private Plan ConstruirPlanDesdeFormulario()
-        {
-            return new Plan
-            {
-                Id_Plan = idPlanSeleccionado ?? 0,
-                Nombre = txtNombre.Text.Trim(),
-                Precio = decimal.Parse(txtPrecio.Text.Trim()),
-                Activo = chkActivo.Checked ? "1" : "0"
-            };
-        }
-
+       
         private void btnAgregar_Click(object sender, EventArgs e)
         {
             try
@@ -307,14 +297,6 @@ namespace GYM_NoSql.Views
             this.Close();
         }
 
-        private void pnlDerecha_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void dgvPlanes_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
+       
     }
 }

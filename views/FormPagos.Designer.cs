@@ -118,7 +118,6 @@
             this.dgvPagos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvPagos.Size = new System.Drawing.Size(750, 480);
             this.dgvPagos.TabIndex = 3;
-            this.dgvPagos.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPagos_CellContentClick);
             // 
             // pnlDerecha
             // 
@@ -139,7 +138,6 @@
             this.pnlDerecha.Name = "pnlDerecha";
             this.pnlDerecha.Size = new System.Drawing.Size(300, 580);
             this.pnlDerecha.TabIndex = 4;
-            this.pnlDerecha.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlDerecha_Paint);
             // 
             // cmbSocio
             // 
