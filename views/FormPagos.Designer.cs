@@ -88,8 +88,9 @@
             this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.txtBuscar.Location = new System.Drawing.Point(72, 62);
             this.txtBuscar.Name = "txtBuscar";
-            this.txtBuscar.Size = new System.Drawing.Size(200, 30);
+            this.txtBuscar.Size = new System.Drawing.Size(666, 30);
             this.txtBuscar.TabIndex = 2;
+            this.txtBuscar.TextChanged += new System.EventHandler(this.txtBuscar_TextChanged);
             // 
             // dgvPagos
             // 
@@ -117,6 +118,7 @@
             this.dgvPagos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvPagos.Size = new System.Drawing.Size(750, 480);
             this.dgvPagos.TabIndex = 3;
+            this.dgvPagos.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPagos_CellContentClick);
             // 
             // pnlDerecha
             // 
@@ -137,6 +139,7 @@
             this.pnlDerecha.Name = "pnlDerecha";
             this.pnlDerecha.Size = new System.Drawing.Size(300, 580);
             this.pnlDerecha.TabIndex = 4;
+            this.pnlDerecha.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlDerecha_Paint);
             // 
             // cmbSocio
             // 
@@ -145,6 +148,7 @@
             this.cmbSocio.Name = "cmbSocio";
             this.cmbSocio.Size = new System.Drawing.Size(256, 24);
             this.cmbSocio.TabIndex = 10;
+            this.cmbSocio.SelectedIndexChanged += new System.EventHandler(this.cmbSocio_SelectedIndexChanged);
             // 
             // lblIdSocio
             // 
@@ -174,6 +178,8 @@
             this.dtpFecha.Name = "dtpFecha";
             this.dtpFecha.Size = new System.Drawing.Size(260, 30);
             this.dtpFecha.TabIndex = 3;
+            this.txtBuscar.Enter += new System.EventHandler(this.txtBuscar_Enter);
+            this.txtBuscar.Leave += new System.EventHandler(this.txtBuscar_Leave);
             // 
             // lblMonto
             // 
@@ -221,7 +227,6 @@
             this.btnEditar.TabIndex = 7;
             this.btnEditar.Text = "Editar";
             this.btnEditar.UseVisualStyleBackColor = false;
-            this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
             // 
             // btnEliminar
             // 
@@ -272,6 +277,7 @@
             this.pnlDerecha.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
 
         }
 

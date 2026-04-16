@@ -13,7 +13,7 @@
 
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnRegresar = new System.Windows.Forms.Button();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.pnlTop = new System.Windows.Forms.Panel();
@@ -100,14 +100,14 @@
             this.txtBuscarNombre.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.txtBuscarNombre.Location = new System.Drawing.Point(72, 62);
             this.txtBuscarNombre.Name = "txtBuscarNombre";
-            this.txtBuscarNombre.Size = new System.Drawing.Size(180, 30);
+            this.txtBuscarNombre.Size = new System.Drawing.Size(259, 30);
             this.txtBuscarNombre.TabIndex = 2;
             this.txtBuscarNombre.TextChanged += new System.EventHandler(this.txtBuscarNombre_TextChanged);
             // 
             // lblPlan
             // 
             this.lblPlan.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblPlan.Location = new System.Drawing.Point(265, 65);
+            this.lblPlan.Location = new System.Drawing.Point(337, 70);
             this.lblPlan.Name = "lblPlan";
             this.lblPlan.Size = new System.Drawing.Size(40, 20);
             this.lblPlan.TabIndex = 3;
@@ -122,7 +122,7 @@
             "Plan 1",
             "Plan 2",
             "Plan 3"});
-            this.cmbPlan.Location = new System.Drawing.Point(308, 62);
+            this.cmbPlan.Location = new System.Drawing.Point(383, 62);
             this.cmbPlan.Name = "cmbPlan";
             this.cmbPlan.Size = new System.Drawing.Size(140, 31);
             this.cmbPlan.TabIndex = 4;
@@ -131,9 +131,9 @@
             // lblEstado
             // 
             this.lblEstado.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblEstado.Location = new System.Drawing.Point(460, 65);
+            this.lblEstado.Location = new System.Drawing.Point(539, 68);
             this.lblEstado.Name = "lblEstado";
-            this.lblEstado.Size = new System.Drawing.Size(55, 20);
+            this.lblEstado.Size = new System.Drawing.Size(65, 20);
             this.lblEstado.TabIndex = 5;
             this.lblEstado.Text = "Estado:";
             // 
@@ -145,7 +145,7 @@
             "Todos",
             "Activos",
             "Inactivos"});
-            this.cmbEstado.Location = new System.Drawing.Point(518, 62);
+            this.cmbEstado.Location = new System.Drawing.Point(610, 62);
             this.cmbEstado.Name = "cmbEstado";
             this.cmbEstado.Size = new System.Drawing.Size(130, 31);
             this.cmbEstado.TabIndex = 6;
@@ -160,14 +160,14 @@
             this.dgvSocios.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvSocios.BackgroundColor = System.Drawing.Color.White;
             this.dgvSocios.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(90)))), ((int)(((byte)(73)))));
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvSocios.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(90)))), ((int)(((byte)(73)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvSocios.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvSocios.ColumnHeadersHeight = 29;
             this.dgvSocios.EnableHeadersVisualStyles = false;
             this.dgvSocios.Location = new System.Drawing.Point(10, 100);
@@ -333,7 +333,7 @@
             this.lblIdPlan.Name = "lblIdPlan";
             this.lblIdPlan.Size = new System.Drawing.Size(260, 18);
             this.lblIdPlan.TabIndex = 12;
-            this.lblIdPlan.Text = "Id Plan";
+            this.lblIdPlan.Text = "Plan";
             // 
             // btnAgregar
             // 

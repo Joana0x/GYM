@@ -66,7 +66,8 @@ namespace GYM_NoSql.Views
                     // Llenar cmbPlan dinámicamente desde la BD
                     if (cmbPlan != null)
                     {
-                        OracleCommand cmdPlan = new OracleCommand("SELECT nombre FROM planes ORDER BY id_plan", conn);
+                        OracleCommand cmdPlan = new OracleCommand(
+    "SELECT id_plan, nombre FROM planes WHERE activo = '1' ORDER BY id_plan", conn);
                         OracleDataAdapter daPlan = new OracleDataAdapter(cmdPlan);
                         DataTable dtPlan = new DataTable();
                         daPlan.Fill(dtPlan);
@@ -93,7 +94,7 @@ namespace GYM_NoSql.Views
                         cargandoDatos = true;
 
                         cmbEstado.Items.Clear();
-                        cmbEstado.Items.AddRange(new string[] { "Todos", "Activo", "Inactivo" });
+                        cmbEstado.Items.AddRange(new string[] { "Todos", "Activos", "Inactivos" });
                         cmbEstado.SelectedIndex = 0;
 
                         cargandoDatos = estadoAnterior;
@@ -130,8 +131,8 @@ namespace GYM_NoSql.Views
                     cmbSexo.ValueMember = "id_sexo";
 
                     // --- Llenar cmbPlanRegistro ---
-                    OracleCommand cmdPlan = new OracleCommand("SELECT id_plan, nombre FROM planes ORDER BY id_plan", conn);
-                    OracleDataAdapter daPlan = new OracleDataAdapter(cmdPlan);
+                    OracleCommand cmdPlan = new OracleCommand(
+                        "SELECT id_plan, nombre FROM planes WHERE activo = '1' ORDER BY id_plan", conn); OracleDataAdapter daPlan = new OracleDataAdapter(cmdPlan);
                     DataTable dtPlan = new DataTable();
                     daPlan.Fill(dtPlan);
 
@@ -153,8 +154,7 @@ namespace GYM_NoSql.Views
 
         private void CargarTablaSocios()
         {
-            // Evita que busque si la pantalla apenas se está dibujando
-            if (txtBuscarNombre == null || cmbPlan == null) return;
+            if (txtBuscarNombre == null || cmbPlan == null || cmbEstado == null) return;
 
             using (OracleConnection conn = new OracleConnection(connectionString))
             {
@@ -163,36 +163,70 @@ namespace GYM_NoSql.Views
                     cargandoDatos = true;
                     conn.Open();
 
-                    // --- LÓGICA DE BÚSQUEDA ---
-                    // Capturamos lo que el usuario escribió con el NOMBRE CORRECTO de tu variable
                     string textoBusqueda = txtBuscarNombre.Text.Trim().ToUpper();
                     string planFiltro = cmbPlan.Text;
+                    string estadoFiltro = cmbEstado.Text;
 
                     string sql = @"
-                        SELECT 
-                            ROW_NUMBER() OVER (ORDER BY s.id_socio ASC) AS ""No."",
-                            s.id_socio AS ""ID_INTERNO"",
-                            s.nombre AS ""Nombre"",
-                            s.primer_apellido AS ""Paterno"",
-                            s.segundo_apellido AS ""Materno"",
-                            s.telefono AS ""Teléfono"",
-                            x.descripcion AS ""Sexo"",
-                            p.nombre AS ""Plan"",
-                            p.precio AS ""Precio"",
-                            s.fecha_registro AS ""Fecha""
-                        FROM socios s
-                        INNER JOIN sexos x ON s.id_sexo = x.id_sexo
-                        INNER JOIN planes p ON s.id_plan = p.id_plan
-                        WHERE 1=1 ";
+                SELECT 
+                    s.id_socio AS ""ID Socio"",
+                    s.nombre AS ""Nombre"",
+                    s.primer_apellido AS ""Paterno"",
+                    s.segundo_apellido AS ""Materno"",
+                    s.telefono AS ""Teléfono"",
+                    x.descripcion AS ""Sexo"",
+                    p.nombre AS ""Plan"",
+                    p.precio AS ""Precio"",
+                    s.fecha_registro AS ""Fecha"",
+                    CASE
+                        WHEN MAX(pg.fecha_pago) IS NULL THEN 'Inactivo'
+                        WHEN MAX(pg.fecha_pago) + 30 >= TRUNC(SYSDATE) THEN 'Activo'
+                        ELSE 'Inactivo'
+                    END AS ""Estado""
+                FROM socios s
+                INNER JOIN sexos x ON s.id_sexo = x.id_sexo
+                INNER JOIN planes p ON s.id_plan = p.id_plan
+                LEFT JOIN pagos pg ON s.id_socio = pg.id_socio
+                WHERE 1=1 ";
 
-                    // Agregamos filtros dinámicos si el usuario escribió algo
                     if (!string.IsNullOrEmpty(textoBusqueda))
                     {
-                        sql += " AND (UPPER(s.nombre) LIKE :busq OR UPPER(s.primer_apellido) LIKE :busq OR UPPER(s.segundo_apellido) LIKE :busq)";
+                        sql += @" AND (
+                            UPPER(s.nombre) LIKE :busq 
+                            OR UPPER(s.primer_apellido) LIKE :busq 
+                            OR UPPER(s.segundo_apellido) LIKE :busq
+                            OR TO_CHAR(s.id_socio) LIKE :busq
+                         )";
                     }
+
                     if (planFiltro != "Todos" && !string.IsNullOrEmpty(planFiltro))
                     {
                         sql += " AND p.nombre = :plan";
+                    }
+
+                    sql += @"
+                GROUP BY
+                    s.id_socio,
+                    s.nombre,
+                    s.primer_apellido,
+                    s.segundo_apellido,
+                    s.telefono,
+                    x.descripcion,
+                    p.nombre,
+                    p.precio,
+                    s.fecha_registro";
+
+                    if (estadoFiltro == "Activos")
+                    {
+                        sql += @"
+                    HAVING MAX(pg.fecha_pago) IS NOT NULL
+                       AND MAX(pg.fecha_pago) + 30 >= TRUNC(SYSDATE)";
+                    }
+                    else if (estadoFiltro == "Inactivos")
+                    {
+                        sql += @"
+                    HAVING MAX(pg.fecha_pago) IS NULL
+                        OR MAX(pg.fecha_pago) + 30 < TRUNC(SYSDATE)";
                     }
 
                     sql += " ORDER BY s.id_socio ASC";
@@ -201,7 +235,6 @@ namespace GYM_NoSql.Views
                     {
                         cmd.BindByName = true;
 
-                        // Insertamos los parámetros de búsqueda seguros
                         if (!string.IsNullOrEmpty(textoBusqueda))
                             cmd.Parameters.Add("busq", "%" + textoBusqueda + "%");
 
@@ -236,7 +269,6 @@ namespace GYM_NoSql.Views
             }
         }
 
-        // --- LOS 3 EVENTOS DE BÚSQUEDA QUE TÚ CREASTE ---
         private void txtBuscarNombre_TextChanged(object sender, EventArgs e)
         {
             if (!cargandoDatos) CargarTablaSocios();
@@ -277,9 +309,9 @@ namespace GYM_NoSql.Views
             {
                 DataGridViewRow fila = dgvSocios.CurrentRow;
 
-                if (fila.Cells["ID_INTERNO"].Value != DBNull.Value && fila.Cells["ID_INTERNO"].Value != null)
+                if (fila.Cells["ID Socio"].Value != DBNull.Value && fila.Cells["ID Socio"].Value != null)
                 {
-                    idSocioSeleccionado = Convert.ToInt32(fila.Cells["ID_INTERNO"].Value);
+                    idSocioSeleccionado = Convert.ToInt32(fila.Cells["ID Socio"].Value);
 
                     txtNombre.Text = fila.Cells["Nombre"].Value?.ToString();
                     txtPrimerAp.Text = fila.Cells["Paterno"].Value?.ToString();
@@ -426,5 +458,6 @@ namespace GYM_NoSql.Views
         // Eventos vacíos por si el diseñador visual los sigue buscando
         private void dgvSocios_CellClick(object sender, DataGridViewCellEventArgs e) { }
         private void dgvSocios_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
+
     }
 }
