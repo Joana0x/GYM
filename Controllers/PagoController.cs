@@ -1,162 +1,130 @@
 ﻿using GYM_NoSql.Models;
+using GYM_NoSql.Data; // Donde creaste MongoDbContext
+using MongoDB.Driver;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using Oracle.ManagedDataAccess.Client;
-using System.Configuration;
+using System.Linq;
 
 namespace GYM_NoSql.controllers
 {
-    public class PagoController
+    public class PagoController : MongoDbContext
     {
-        private string connectionString = ConfigurationManager.ConnectionStrings["OracleConn"].ConnectionString;
+        private IMongoCollection<BsonDocument> _pagos;
+        private IMongoCollection<BsonDocument> _socios;
+        private IMongoCollection<BsonDocument> _planes;
 
-       
+        public PagoController()
+        {
+            _pagos = db.GetCollection<BsonDocument>("pagos");
+            _socios = db.GetCollection<BsonDocument>("socios");
+            _planes = db.GetCollection<BsonDocument>("planes");
+        }
 
         public void Agregar(Pago p)
         {
-            using (OracleConnection conn = new OracleConnection(connectionString))
-            {
-                conn.Open();
+            // Calculamos el siguiente ID manual (porque tu validador pide int)
+            int ultimoId = _pagos.Find(new BsonDocument()).SortByDescending(x => x["_id"]).Limit(1).FirstOrDefault()?["_id"].AsInt32 ?? 0;
 
-                string sql = "INSERT INTO pagos (id_socio, fecha_pago, monto) VALUES (:idSocio, :fecha, :monto)";
-
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    cmd.Parameters.Add("idSocio", p.Id_Socio);
-                    cmd.Parameters.Add("fecha", p.Fecha_Pago);
-                    cmd.Parameters.Add("monto", p.Monto);
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            var doc = new BsonDocument {
+                { "_id", ultimoId + 1 },
+                { "id_socio", p.Id_Socio },
+                { "fecha_pago", p.Fecha_Pago },
+                { "monto", (double)p.Monto }
+            };
+            _pagos.InsertOne(doc);
         }
 
         public void Eliminar(int idPago)
         {
-            using (OracleConnection conn = new OracleConnection(connectionString))
-            {
-                conn.Open();
-
-                string sql = "DELETE FROM pagos WHERE id_pago = :id";
-
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    cmd.Parameters.Add("id", idPago);
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", idPago);
+            _pagos.DeleteOne(filter);
         }
 
-        // NUEVO: trae socios con su plan y monto
+        // Simula el INNER JOIN entre socios y planes
         public DataTable ObtenerSociosConPlan()
         {
             DataTable dt = new DataTable();
+            dt.Columns.Add("id_socio", typeof(int));
+            dt.Columns.Add("socio_display");
+            dt.Columns.Add("plan_nombre");
+            dt.Columns.Add("monto_plan", typeof(decimal));
 
-            using (OracleConnection conn = new OracleConnection(connectionString))
-            {
-                conn.Open();
+            var listaSocios = _socios.Find(new BsonDocument()).ToList();
+            var listaPlanes = _planes.Find(new BsonDocument()).ToList();
 
-                string sql = @"
-                    SELECT 
-    s.id_socio,
-    (TO_CHAR(s.id_socio) || ' - ' || s.nombre || ' ' || s.primer_apellido) AS socio_display,
-    p.nombre AS plan_nombre,
-    p.precio AS monto_plan
-FROM socios s
-INNER JOIN planes p ON s.id_plan = p.id_plan
-ORDER BY s.id_socio";
+            var query = from s in listaSocios
+                        join pl in listaPlanes on s["id_plan"].AsInt32 equals pl["_id"].AsInt32
+                        orderby s["_id"].AsInt32
+                        select new
+                        {
+                            IdSocio = s["_id"].AsInt32,
+                            Display = $"{s["_id"].AsInt32} - {s["nombre"].AsString} {s["primer_apellido"].AsString}",
+                            Plan = pl["nombre"].AsString,
+                            // CORRECCIÓN AQUÍ: Usamos ToDouble() para que sea flexible
+                            Monto = Convert.ToDecimal(pl["precio"].ToDouble())
+                        };
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                using (OracleDataAdapter da = new OracleDataAdapter(cmd))
-                {
-                    da.Fill(dt);
-                }
-            }
+            foreach (var item in query)
+                dt.Rows.Add(item.IdSocio, item.Display, item.Plan, item.Monto);
 
             return dt;
         }
 
-        // NUEVO: trae el monto del plan del socio seleccionado
         public decimal ObtenerMontoPorSocio(int idSocio)
         {
-            using (OracleConnection conn = new OracleConnection(connectionString))
+            var socio = _socios.Find(Builders<BsonDocument>.Filter.Eq("_id", idSocio)).FirstOrDefault();
+            if (socio != null)
             {
-                conn.Open();
-
-                string sql = @"
-                    SELECT p.precio
-                    FROM socios s
-                    INNER JOIN planes p ON s.id_plan = p.id_plan
-                    WHERE s.id_socio = :idSocio";
-
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    cmd.Parameters.Add("idSocio", idSocio);
-
-                    object resultado = cmd.ExecuteScalar();
-
-                    if (resultado != null && resultado != DBNull.Value)
-                        return Convert.ToDecimal(resultado);
-
-                    return 0;
-                }
+                var plan = _planes.Find(Builders<BsonDocument>.Filter.Eq("_id", socio["id_plan"].AsInt32)).FirstOrDefault();
+                if (plan != null)
+                    // CORRECCIÓN AQUÍ: ToDouble() en lugar de AsDouble
+                    return Convert.ToDecimal(plan["precio"].ToDouble());
             }
+            return 0;
         }
 
-        // OPCIONAL: para mostrar nombre del socio en la tabla
         public DataTable ObtenerHistorialPagos()
         {
             DataTable dt = new DataTable();
+            // Definimos los nombres de las columnas explícitamente
+            dt.Columns.Add("id_pago", typeof(int));
+            dt.Columns.Add("id_socio", typeof(int));
+            dt.Columns.Add("socio");
+            dt.Columns.Add("fecha_pago", typeof(DateTime));
+            dt.Columns.Add("monto", typeof(decimal));
 
-            using (OracleConnection conn = new OracleConnection(connectionString))
-            {
-                conn.Open();
+            var pagos = _pagos.Find(new BsonDocument()).ToList();
+            var socios = _socios.Find(new BsonDocument()).ToList();
 
-                string sql = @"
-                    SELECT 
-                        p.id_pago,
-                        p.id_socio,
-                        (s.nombre || ' ' || s.primer_apellido) AS socio,
-                        p.fecha_pago,
-                        p.monto
-                    FROM pagos p
-                    INNER JOIN socios s ON p.id_socio = s.id_socio
-                    ORDER BY p.id_pago DESC";
+            var query = from p in pagos
+                        join s in socios on p["id_socio"].AsInt32 equals s["_id"].AsInt32
+                        select new
+                        {
+                            IdPago = p["_id"].AsInt32,
+                            IdSocio = s["_id"].AsInt32,
+                            NombreSocio = $"{s["nombre"].AsString} {s["primer_apellido"].AsString}",
+                            Fecha = p["fecha_pago"].ToLocalTime(),
+                            Monto = Convert.ToDecimal(p["monto"].ToDouble())
+                        };
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                using (OracleDataAdapter da = new OracleDataAdapter(cmd))
-                {
-                    da.Fill(dt);
-                }
-            }
+            foreach (var item in query)
+                dt.Rows.Add(item.IdPago, item.IdSocio, item.NombreSocio, item.Fecha, item.Monto);
 
             return dt;
         }
 
         public DateTime? ObtenerProximaFechaPermitida(int idSocio)
         {
-            using (OracleConnection conn = new OracleConnection(connectionString))
-            {
-                conn.Open();
+            var filter = Builders<BsonDocument>.Filter.Eq("id_socio", idSocio);
+            var ultimoPago = _pagos.Find(filter).SortByDescending(x => x["fecha_pago"]).FirstOrDefault();
 
-                string sql = @"
-            SELECT MAX(fecha_pago) AS ultima_fecha_pago
-            FROM pagos
-            WHERE id_socio = :idSocio";
+            if (ultimoPago == null)
+                return null;
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    cmd.Parameters.Add("idSocio", idSocio);
-
-                    object resultado = cmd.ExecuteScalar();
-
-                    if (resultado == null || resultado == DBNull.Value)
-                        return null;
-
-                    DateTime ultimaFechaPago = Convert.ToDateTime(resultado);
-                    return ultimaFechaPago.AddDays(30);
-                }
-            }
+            DateTime ultimaFecha = ultimoPago["fecha_pago"].ToLocalTime();
+            return ultimaFecha.AddDays(30);
         }
 
         public bool PuedeRegistrarPago(int idSocio, DateTime fechaIntento, out DateTime? proximaFechaPermitida)
@@ -168,7 +136,5 @@ ORDER BY s.id_socio";
 
             return fechaIntento.Date >= proximaFechaPermitida.Value.Date;
         }
-
-
     }
 }

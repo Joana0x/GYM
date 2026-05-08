@@ -13,7 +13,7 @@
 
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlTop = new System.Windows.Forms.Panel();
             this.btnRegresar = new System.Windows.Forms.Button();
             this.lblTitulo = new System.Windows.Forms.Label();
@@ -88,9 +88,11 @@
             this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.txtBuscar.Location = new System.Drawing.Point(72, 62);
             this.txtBuscar.Name = "txtBuscar";
-            this.txtBuscar.Size = new System.Drawing.Size(666, 30);
+            this.txtBuscar.Size = new System.Drawing.Size(666, 34);
             this.txtBuscar.TabIndex = 2;
             this.txtBuscar.TextChanged += new System.EventHandler(this.txtBuscar_TextChanged);
+            this.txtBuscar.Enter += new System.EventHandler(this.txtBuscar_Enter);
+            this.txtBuscar.Leave += new System.EventHandler(this.txtBuscar_Leave);
             // 
             // dgvPagos
             // 
@@ -101,14 +103,14 @@
             this.dgvPagos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvPagos.BackgroundColor = System.Drawing.Color.White;
             this.dgvPagos.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(90)))), ((int)(((byte)(73)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvPagos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(90)))), ((int)(((byte)(73)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvPagos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvPagos.ColumnHeadersHeight = 29;
             this.dgvPagos.EnableHeadersVisualStyles = false;
             this.dgvPagos.Location = new System.Drawing.Point(10, 100);
@@ -118,6 +120,7 @@
             this.dgvPagos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvPagos.Size = new System.Drawing.Size(750, 480);
             this.dgvPagos.TabIndex = 3;
+            this.dgvPagos.SelectionChanged += new System.EventHandler(this.dgvPagos_SelectionChanged);
             // 
             // pnlDerecha
             // 
@@ -144,7 +147,7 @@
             this.cmbSocio.FormattingEnabled = true;
             this.cmbSocio.Location = new System.Drawing.Point(19, 45);
             this.cmbSocio.Name = "cmbSocio";
-            this.cmbSocio.Size = new System.Drawing.Size(256, 24);
+            this.cmbSocio.Size = new System.Drawing.Size(256, 28);
             this.cmbSocio.TabIndex = 10;
             this.cmbSocio.SelectedIndexChanged += new System.EventHandler(this.cmbSocio_SelectedIndexChanged);
             // 
@@ -174,10 +177,8 @@
             this.dtpFecha.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.dtpFecha.Location = new System.Drawing.Point(15, 105);
             this.dtpFecha.Name = "dtpFecha";
-            this.dtpFecha.Size = new System.Drawing.Size(260, 30);
+            this.dtpFecha.Size = new System.Drawing.Size(260, 34);
             this.dtpFecha.TabIndex = 3;
-            this.txtBuscar.Enter += new System.EventHandler(this.txtBuscar_Enter);
-            this.txtBuscar.Leave += new System.EventHandler(this.txtBuscar_Leave);
             // 
             // lblMonto
             // 
@@ -194,7 +195,7 @@
             this.txtMonto.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.txtMonto.Location = new System.Drawing.Point(15, 175);
             this.txtMonto.Name = "txtMonto";
-            this.txtMonto.Size = new System.Drawing.Size(260, 30);
+            this.txtMonto.Size = new System.Drawing.Size(260, 34);
             this.txtMonto.TabIndex = 5;
             // 
             // btnAgregar
@@ -275,7 +276,6 @@
             this.pnlDerecha.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
 
         }
 

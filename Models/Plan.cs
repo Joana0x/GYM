@@ -1,9 +1,14 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 
 namespace GYM_NoSql.Models
 {
     public class Plan
     {
+
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         // Llave primaria (NUMBER en Oracle)
         public int Id_Plan { get; set; }
 

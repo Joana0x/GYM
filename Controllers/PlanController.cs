@@ -1,105 +1,65 @@
-﻿using GYM_NoSql.Models;
+﻿using GYM_NoSql.Data;
+using GYM_NoSql.Models;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using Oracle.ManagedDataAccess.Client; // Para conectarnos a Oracle
-using System.Configuration;            // Para leer el App.config
+using System.Linq;
 
 namespace GYM_NoSql.controllers
 {
-    public class PlanController
+    public class PlanController : MongoDbContext
     {
-        // Jalamos la cadena de conexión de tu archivo de configuración
-        private string connectionString = ConfigurationManager.ConnectionStrings["OracleConn"].ConnectionString;
+        private IMongoCollection<BsonDocument> _planes;
 
-        // 1. LEER (Reemplaza a la lista temporal)
+        public PlanController()
+        {
+            _planes = db.GetCollection<BsonDocument>("planes");
+        }
+
         public List<Plan> ObtenerTodos()
         {
-            List<Plan> listaPlanes = new List<Plan>();
-            using (OracleConnection conn = new OracleConnection(connectionString))
+            var docs = _planes.Find(new BsonDocument()).ToList();
+            return docs.Select(d => new Plan
             {
-                conn.Open();
-                // Traemos los datos directamente de la tabla de Oracle
-                OracleCommand cmd = new OracleCommand("SELECT id_plan, nombre, precio, activo FROM planes", conn);
-
-                using (OracleDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        listaPlanes.Add(new Plan
-                        {
-                            Id_Plan = Convert.ToInt32(reader["id_plan"]),
-                            Nombre = reader["nombre"].ToString(),
-                            Precio = Convert.ToDecimal(reader["precio"]),
-                            Activo = reader["activo"].ToString()
-                        });
-                    }
-                }
-            }
-            return listaPlanes;
+                Id_Plan = d["_id"].AsInt32,
+                Nombre = d["nombre"].AsString,
+                Precio = d.Contains("precio") ? Convert.ToDecimal(d["precio"].ToDouble()) : 0m,
+                Activo = d["activo"].AsString
+            }).ToList();
         }
 
-        // 2. CREAR (Hacemos un INSERT real)
         public void Agregar(Plan p)
         {
-            try
-            {
-                using (OracleConnection conn = new OracleConnection(connectionString))
-                {
-                    conn.Open();
-                    string sql = "INSERT INTO planes (nombre, precio, activo) VALUES (:nombre, :precio, :activo)";
+            // Nota: Como usas _id: int en tu validador, debemos calcular el siguiente ID
+            int ultimoId = _planes.Find(new BsonDocument()).SortByDescending(x => x["_id"]).Limit(1).FirstOrDefault()?["_id"].AsInt32 ?? 0;
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
-                        cmd.Parameters.Add("nombre", p.Nombre);
-                        cmd.Parameters.Add("precio", p.Precio);
-                        cmd.Parameters.Add("activo", p.Activo);
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al agregar plan: " + ex.Message);
-            }
+            var doc = new BsonDocument {
+                { "_id", ultimoId + 1 },
+                { "nombre", p.Nombre },
+                // En el método Agregar:
+{ "precio", Convert.ToDouble(p.Precio) },
+                { "activo", p.Activo },
+                { "duracion_dias", 30 } // Valor por defecto según tu script
+            };
+            _planes.InsertOne(doc);
         }
 
-        // 3. ACTUALIZAR (Hacemos un UPDATE real)
         public void Editar(Plan editado)
         {
-            using (OracleConnection conn = new OracleConnection(connectionString))
-            {
-                conn.Open();
-                string sql = "UPDATE planes SET nombre = :nombre, precio = :precio, activo = :activo WHERE id_plan = :id";
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", editado.Id_Plan);
+            var update = Builders<BsonDocument>.Update
+                .Set("nombre", editado.Nombre)
+                .Set("precio", (double)editado.Precio)
+                .Set("activo", editado.Activo);
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    cmd.Parameters.Add("nombre", editado.Nombre);
-                    cmd.Parameters.Add("precio", editado.Precio);
-                    cmd.Parameters.Add("activo", editado.Activo);
-                    cmd.Parameters.Add("id", editado.Id_Plan); // Usamos el ID correcto
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            _planes.UpdateOne(filter, update);
         }
 
-        // 4. ELIMINAR (Hacemos un DELETE real)
-        public void Eliminar(int idPlan) // Cambiamos el parámetro de string a int
+        public void Eliminar(int idPlan)
         {
-            using (OracleConnection conn = new OracleConnection(connectionString))
-            {
-                conn.Open();
-                string sql = "DELETE FROM planes WHERE id_plan = :id";
-
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    cmd.Parameters.Add("id", idPlan);
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", idPlan);
+            _planes.DeleteOne(filter);
         }
-
-        
-        }
-    
+    }
 }

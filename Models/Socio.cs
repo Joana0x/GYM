@@ -1,9 +1,13 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 
 namespace GYM_NoSql.Models
 {
     public class Socio
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         // Usamos 'int' porque en Oracle lo definimos como NUMBER
         public int Id_Socio { get; set; }
 
@@ -16,7 +20,7 @@ namespace GYM_NoSql.Models
         public string Primer_Apellido { get; set; }
         public string Segundo_Apellido { get; set; }
         public string Telefono { get; set; }
-
+        public string Activo { get; set; }
         // Usamos 'DateTime' porque en Oracle es un DATE
         public DateTime Fecha_Registro { get; set; }
     }

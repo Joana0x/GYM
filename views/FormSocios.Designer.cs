@@ -177,7 +177,6 @@
             this.dgvSocios.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvSocios.Size = new System.Drawing.Size(761, 505);
             this.dgvSocios.TabIndex = 7;
-            this.dgvSocios.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvSocios_CellContentClick);
             this.dgvSocios.SelectionChanged += new System.EventHandler(this.dgvSocios_SelectionChanged);
             // 
             // pnlDerecha
